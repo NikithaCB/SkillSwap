@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../utils/firebase";
 import "../styles/dashboard.css";
 
-function Dashboard({ user }) {
+function Dashboard({ user, initiateLogout }) {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [currentUserProfileExists, setCurrentUserProfileExists] =
@@ -14,25 +12,37 @@ function Dashboard({ user }) {
   const [showTeach, setShowTeach] = useState(true); // State for toggle
 
   useEffect(() => {
+    console.log("Dashboard.js: Fetching all users.");
     axios
       .get("http://localhost:5000/api/users")
-      .then((res) => setUsers(res.data))
-      .catch((err) => console.error("Error fetching all users:", err));
+      .then((res) => {
+        console.log("Dashboard.js: Users fetched successfully.", res.data);
+        setUsers(res.data);
+      })
+      .catch((err) =>
+        console.error("Dashboard.js: Error fetching all users:", err)
+      );
   }, []);
 
   useEffect(() => {
     if (user && user.uid) {
+      console.log(
+        "Dashboard.js: Checking current user profile existence for UID:",
+        user.uid
+      );
       axios
         .get(`http://localhost:5000/api/users/by-google-id/${user.uid}`)
         .then((res) => {
+          console.log("Dashboard.js: Current user profile found.", res.data);
           setCurrentUserProfileExists(true);
         })
         .catch((err) => {
           if (err.response && err.response.status === 404) {
+            console.log("Dashboard.js: Current user profile not found (404).");
             setCurrentUserProfileExists(false);
           } else {
             console.error(
-              "Error checking current user profile existence:",
+              "Dashboard.js: Error checking current user profile existence:",
               err
             );
             setCurrentUserProfileExists(false);
@@ -43,20 +53,31 @@ function Dashboard({ user }) {
 
   // Filter users based on search query and toggle state
   const filteredUsers = users.filter((user) => {
-    const skillsToSearch = showTeach ? user.teachSkills : user.learnSkills;
+    // Provide a default empty array if teachSkills or learnSkills is null or undefined
+    const teachSkills = user.teachSkills || [];
+    const learnSkills = user.learnSkills || [];
+
+    const skillsToSearch = showTeach ? teachSkills : learnSkills;
     const skillsMatch = skillsToSearch
       .join(",")
       .toLowerCase()
       .includes(search.toLowerCase());
-    const nameMatch = user.name.toLowerCase().includes(search.toLowerCase());
-    return skillsMatch || nameMatch; // Search by skills OR name
+
+    const nameMatch =
+      typeof user.name === "string" &&
+      user.name.toLowerCase().includes(search.toLowerCase());
+
+    return skillsMatch || nameMatch;
   });
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      navigate("/");
+      console.log("Dashboard.js: Calling initiateLogout from AppContent.");
+      await initiateLogout(); // Call the passed initiateLogout function
+      // Navigation to "/" will be handled by the onAuthStateChanged listener in AppContent
+      console.log("Dashboard.js: initiateLogout finished.");
     } catch (error) {
+      console.error("Dashboard.js: Error during logout:", error);
       alert(error.message);
     }
   };
@@ -73,7 +94,8 @@ function Dashboard({ user }) {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <div className="logo">Welcome to SkillSwap, {user.name} </div> {/* Add logo/app name */}
+        <div className="logo">Welcome to SkillSwap, {user.name} </div>{" "}
+        {/* Add logo/app name */}
         <div className="header-right">
           <button onClick={handleLogout} className="logout-button">
             Logout

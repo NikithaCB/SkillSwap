@@ -102,13 +102,28 @@ router.get("/:userId", async (req, res) => {
 // Keep this route for Google login flow if needed, but ensure security
 router.get("/by-google-id/:googleId", async (req, res) => {
   try {
-    const user = await User.findOne({ googleId: req.params.googleId });
+    // Find user by either googleId or firebaseUid
+    const user = await User.findOne({
+      $or: [
+        { googleId: req.params.googleId },
+        { firebaseUid: req.params.googleId },
+      ],
+    }).select("+firebaseUid +googleId"); // Also select these fields
+
     if (!user) {
+      console.log(
+        "Backend: User not found by googleId or firebaseUid:",
+        req.params.googleId
+      );
       return res.status(404).json({ msg: "User not found" });
     }
+    console.log("Backend: User found by googleId or firebaseUid:", user);
     res.json(user);
   } catch (err) {
-    console.error(err.message);
+    console.error(
+      "Backend: Error fetching user by googleId/firebaseUid:",
+      err.message
+    );
     res.status(500).send("Server Error");
   }
 });

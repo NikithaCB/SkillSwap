@@ -13,20 +13,12 @@ import { FaGoogle } from "react-icons/fa";
 
 import axios from "axios"; // Import axios
 
-function Login({ onLogin }) {
+function Login({ onSuccessfulAuth }) {
   const navigate = useNavigate();
 
   // State for Email/Password Auth
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // Removed State for name as it will be handled via Firebase auth and profile form
-  // const [name, setName] = useState("");
-
-  // Removed State for Phone Auth
-  // const [phoneNumber, setPhoneNumber] = useState("");
-  // const [otp, setOtp] = useState("");
-  // const [confirmationResult, setConfirmationResult] = useState(null);
-  // const [showOtpInput, setShowOtpInput] = useState(false);
 
   // Google Login Handler (existing, already modified)
   const handleGoogleLogin = async () => {
@@ -54,11 +46,9 @@ function Login({ onLogin }) {
       localStorage.setItem("token", res.data.token);
       console.log("Backend JWT saved to localStorage.");
 
-      // Call onLogin to signal successful auth to AppContent
+      // Call onSuccessfulAuth to signal successful auth to AppContent
       // AppContent handleSuccessfulAuth will validate the backend token and set state.
-      onLogin(res.data);
-
-      alert("Google Login successful!");
+      onSuccessfulAuth(res.data);
       console.log("Attempting to navigate to dashboard after Google login...");
       navigate("/dashboard");
     } catch (error) {
@@ -67,9 +57,9 @@ function Login({ onLogin }) {
         error.response?.data || error.message
       );
       console.error("Full Google Login error object:", error);
-      alert(
-        "Google Login failed: " + (error.response?.data?.msg || error.message)
-      );
+      // alert(
+      //   "Google Login failed: " + (error.response?.data?.msg || error.message)
+      // );
     }
   };
 
@@ -105,9 +95,8 @@ function Login({ onLogin }) {
       localStorage.setItem("token", res.data.token);
       console.log("Backend JWT saved to localStorage after registration.");
 
-      onLogin(res.data);
+      onSuccessfulAuth(res.data);
 
-      alert("Registration successful! Please complete your profile.");
       console.log("Attempting to navigate to dashboard after email signup...");
       navigate("/dashboard");
     } catch (err) {
@@ -141,9 +130,8 @@ function Login({ onLogin }) {
       localStorage.setItem("token", res.data.token);
       console.log("Backend JWT saved to localStorage after login.");
 
-      onLogin(res.data);
+      onSuccessfulAuth(res.data);
 
-      alert("Login successful!");
       console.log("Attempting to navigate to dashboard after email login...");
       navigate("/dashboard");
     } catch (err) {

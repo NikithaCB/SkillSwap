@@ -27,7 +27,7 @@ function Chat({ currentUser, onClose, recipientId }) {
   const navigate = useNavigate();
   const [recipientFirebaseUid, setRecipientFirebaseUid] = useState(null);
 
-  console.log(currentUser);
+  console.log("Chat component - currentUser:", currentUser);
 
   // Function to generate a unique chat ID between two users using Firebase UIDs
   const generateChatId = (uid1, uid2) => {
@@ -73,15 +73,9 @@ function Chat({ currentUser, onClose, recipientId }) {
         if (data.firebaseUid) {
           setRecipientFirebaseUid(data.firebaseUid);
           console.log("Using recipient firebaseUid:", data.firebaseUid);
-        } else if (data.googleId) {
-          setRecipientFirebaseUid(data.googleId);
-          console.log(
-            "Using recipient googleId as firebaseUid:",
-            data.googleId
-          );
         } else {
           console.error(
-            "Recipient Firebase UID or Google ID not found in backend response."
+            "Recipient Firebase UID not found in backend response."
           );
           setError("Recipient data incomplete.");
           setIsLoading(false);
@@ -104,13 +98,13 @@ function Chat({ currentUser, onClose, recipientId }) {
 
   // Initialize or get chat document and set up message listener
   useEffect(() => {
-    if (!currentUser?.id || !recipientFirebaseUid) {
+    if (!currentUser?.uid || !recipientFirebaseUid) {
       if (isLoading) return;
       setIsLoading(false);
       return;
     }
 
-    const id = generateChatId(currentUser.id, recipientFirebaseUid);
+    const id = generateChatId(currentUser.uid, recipientFirebaseUid);
     if (!id) {
       setError("Invalid chat ID generated");
       setIsLoading(false);
@@ -126,7 +120,7 @@ function Chat({ currentUser, onClose, recipientId }) {
         await setDoc(
           chatRef,
           {
-            participants: [currentUser.id, recipientFirebaseUid],
+            participants: [currentUser.uid, recipientFirebaseUid],
             lastUpdated: serverTimestamp(),
           },
           { merge: true }
@@ -169,7 +163,7 @@ function Chat({ currentUser, onClose, recipientId }) {
       setError("Failed to initialize chat listener");
       setIsLoading(false);
     }
-  }, [currentUser?.id, recipientFirebaseUid]);
+  }, [currentUser?.uid, recipientFirebaseUid]);
 
   // Auto-scroll to latest message
   useEffect(() => {
@@ -182,7 +176,7 @@ function Chat({ currentUser, onClose, recipientId }) {
     e.preventDefault();
     if (
       !newMessage.trim() ||
-      !currentUser?.id ||
+      !currentUser?.uid ||
       !chatId ||
       !recipientFirebaseUid
     )
@@ -198,7 +192,7 @@ function Chat({ currentUser, onClose, recipientId }) {
       await addDoc(messagesCollectionRef, {
         text: messageText,
         createdAt: serverTimestamp(),
-        senderId: currentUser.id,
+        senderId: currentUser.uid,
         senderName: currentUser.name || "Unknown User",
         recipientId: recipientFirebaseUid,
       });
@@ -271,49 +265,33 @@ function Chat({ currentUser, onClose, recipientId }) {
             No messages yet. Start the conversation!
           </div>
         ) : (
-          (console.log("Chat.js: Rendering messages.", {
-            currentUser,
-            messages,
-          }),
-          currentUser && currentUser.id ? (
-            messages.map((message) => {
-              console.log("Chat.js: Mapping message", message.id, {
-                messageSenderId: message.senderId,
-                currentUserId: currentUser.id,
-              });
+          messages.map((message) => {
+            const senderId = message?.senderId;
+            const currentUserId = currentUser?.uid;
 
-              let messageClass = "message";
-
-              const senderId = message.senderId || "";
-              const currentUserId = currentUser.id || "";
-
-              if (senderId && currentUserId) {
-                if (senderId === currentUserId) {
-                  messageClass += " sent";
-                } else {
-                  messageClass += " received";
-                }
+            let messageClass = "message";
+            if (senderId && currentUserId) {
+              if (senderId === currentUserId) {
+                messageClass += " sent";
               } else {
-                messageClass += " unknown-sender";
+                messageClass += " received";
               }
+            } else {
+              messageClass += " unknown-sender";
+            }
 
-              return (
-                <div key={message.id} className={messageClass}>
-                  <div className="message-sender">
-                    {message.senderName || "Unknown User"}
-                  </div>
-                  <div className="message-content">{message.text}</div>
-                  <div className="message-timestamp">
-                    {formatTimestamp(message.createdAt)}
-                  </div>
+            return (
+              <div key={message.id} className={messageClass}>
+                <div className="message-sender">
+                  {message.senderName || "Unknown User"}
                 </div>
-              );
-            })
-          ) : (
-            <div className="chat-loading">
-              Loading user data for messages...
-            </div>
-          ))
+                <div className="message-content">{message.text}</div>
+                <div className="message-timestamp">
+                  {formatTimestamp(message.createdAt)}
+                </div>
+              </div>
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>

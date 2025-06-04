@@ -94,22 +94,35 @@ function ProfileDetails({ currentUser }) {
     // Only depend on currentUser.id if you need to refetch when *the* current user changes, not just their data
   }, [userId, currentUser]); // Keep userId and currentUser as dependencies
 
-  // Modify handleChat to show the pop-up
+  // Modify handleChat to show the pop-up with Firebase UID check
   const handleChat = () => {
     console.log("ProfileDetails.js: Chat button clicked.");
-    if (profile && profile._id) {
-      console.log(
-        "ProfileDetails.js: Showing chat pop-up for user:",
-        profile._id
-      );
-      setShowChatPopup(true); // Set state to show the pop-up
-      // No navigation needed here
-    } else {
+    if (!profile || !profile._id) {
       console.error(
         "ProfileDetails.js: Cannot initiate chat, profile or profile._id is missing."
       );
       alert("Cannot initiate chat at this time.");
+      return; // Exit if profile data is incomplete
     }
+
+    // Check if the *current* user has a firebaseUid. This is required for generating chat IDs.
+    if (!currentUser || !currentUser.id || !currentUser.firebaseUid) {
+      console.log("ProfileDetails.js: Current user Firebase UID not found.");
+      const confirmUpdate = window.confirm(
+        "To start a chat, your profile needs to be complete. Please update your profile with necessary information including linking your account to enable chat. Do you want to go to your Profile Form now?"
+      );
+      if (confirmUpdate) {
+        navigate("/create-profile"); // Navigate to the current user's profile form
+      }
+      return; // Exit if current user's Firebase UID is missing
+    }
+
+    // If the current user's profile is complete, proceed to show the chat pop-up.
+    // The Chat component will handle fetching recipient data and checking their firebaseUid.
+    console.log(
+      "ProfileDetails.js: Current user Firebase UID found. Proceeding to show chat."
+    );
+    setShowChatPopup(true); // Set state to show the pop-up
   };
 
   // Function to close the chat pop-up

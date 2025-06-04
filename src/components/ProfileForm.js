@@ -2,22 +2,22 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/profileForm.css";
 
-function ProfileForm({ user, onSave }) {
+function ProfileForm({ currentUser, onProfileSave }) {
   const [formData, setFormData] = useState({
-    teachSkills: user?.teachSkills || [],
-    learnSkills: user?.learnSkills || [],
-    bio: user?.bio || "",
+    teachSkills: currentUser?.teachSkills || [],
+    learnSkills: currentUser?.learnSkills || [],
+    bio: currentUser?.bio || "",
   });
 
   useEffect(() => {
-    if (user) {
+    if (currentUser) {
       setFormData({
-        teachSkills: user.teachSkills || [],
-        learnSkills: user.learnSkills || [],
-        bio: user.bio || "",
+        teachSkills: currentUser.teachSkills || [],
+        learnSkills: currentUser.learnSkills || [],
+        bio: currentUser.bio || "",
       });
     }
-  }, [user]);
+  }, [currentUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +34,7 @@ function ProfileForm({ user, onSave }) {
 
     const profileDataToSend = {
       ...formData,
-      firebaseUid: user.id,
+      firebaseUid: currentUser.uid,
     };
 
     console.log(
@@ -61,7 +61,7 @@ function ProfileForm({ user, onSave }) {
         }
       );
       console.log("Profile saved successfully:", res.data);
-      onSave(res.data);
+      onProfileSave(res.data);
       alert("Profile saved successfully!");
     } catch (err) {
       console.error(

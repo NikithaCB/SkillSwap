@@ -1,0 +1,90 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #424242; /* Dark gray background */
+  color: #ffffff; /* White text */
+  font-family: sans-serif;
+}
+
+.login-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  background-color: #555555; /* Slightly lighter gray for content area */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.login-content h1 {
+  margin-bottom: 10px;
+  font-size: 2em;
+}
+
+.login-content p {
+  margin-bottom: 30px;
+  font-size: 1em;
+  color: #cccccc; /* Lighter gray for subtitle */
+}
+
+.google-login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* Make button full width of its container */
+  padding: 10px 20px;
+  margin-bottom: 15px;
+  background-color: #000000; /* Black background */
+  color: #ffffff; /* White text */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.google-icon {
+  margin-right: 10px;
+}
+
+.or-separator {
+  margin: 20px 0;
+  font-size: 0.9em;
+  color: #cccccc;
+}
+
+.login-input {
+  width: calc(100% - 20px); /* Adjust width for padding */
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #cccccc; /* Light gray border */
+  border-radius: 4px;
+  font-size: 1em;
+  background-color: #ffffff; /* White background */
+  color: #333333; /* Dark text */
+}
+
+.login-button,
+.signup-button {
+  width: 100%; /* Make button full width */
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  background-color: #000000; /* Black background */
+  color: #ffffff; /* White text */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.signup-button {
+  margin-bottom: 0; /* No bottom margin for the last button */
+}
+
+/* Hover effects */
+.google-login-button:hover,
+.login-button:hover,
+.signup-button:hover {
+  opacity: 0.9;
+} 
