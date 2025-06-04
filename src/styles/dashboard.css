@@ -1,0 +1,117 @@
+.dashboard-container {
+  margin: 0 auto;
+  padding: 20px;
+  background-color: hwb(0 64% 34%);  
+
+}
+
+.dashboard-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+
+.search-input {
+  width: 30%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  
+}           
+
+.logout-button {
+  background-color: #f00;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 10px;
+}
+
+.profile-button {
+  background-color: #00f;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+}   
+
+.user-list {
+  list-style: none;
+  padding: 0;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}   
+
+.user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}   
+
+.user-name {
+  font-weight: bold;
+  font-size: 18px;
+
+}   
+
+.user-info {
+  margin-top: 5px;
+}
+
+.user-list li {
+  display: flex;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #fff;       
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
+  margin-right: 20px;
+}   
+
+.user-list li:hover {
+  background-color: #f0f0f0;
+}      
+
+.user-list li:active {
+  background-color: #000;
+  color: #fff;
+}   
+
+.user-list li:focus {
+  background-color: #000;
+  color: #fff;
+}   
+
+.user-list li:focus-within {
+  background-color: #000;   
+  color: #fff;
+}   
+
+.user-list li:focus-visible {
+  background-color: #000;
+  color: #fff;
+}   
+
+.user-list-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
+  margin-right: 20px; 
+}

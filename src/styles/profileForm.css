@@ -1,0 +1,61 @@
+/* src/styles/ProfileForm.css */
+
+.profile-form-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-form-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.profile-form-container form div {
+    margin-bottom: 15px;
+}
+
+.profile-form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.profile-form-container input[type="text"],
+.profile-form-container textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.profile-form-container textarea {
+    resize: vertical; /* Allow vertical resizing */
+    min-height: 100px; /* Minimum height for the textarea */
+}
+
+.profile-form-container button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff; /* Example primary color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.profile-form-container button[type="submit"]:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}

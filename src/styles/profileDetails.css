@@ -1,0 +1,82 @@
+
+/* Basic container styling */
+.profile-details-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Header with image and name */
+.profile-details-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-details-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-right: 20px;
+  object-fit: cover; /* Ensure image covers the area without stretching */
+  border: 2px solid #ddd;
+}
+
+.profile-details-name {
+  font-size: 1.8em;
+  margin: 0;
+  color: #333;
+}
+
+/* Section styling (skills, bio) */
+.profile-details-section {
+  margin-bottom: 20px;
+}
+
+.profile-details-section h3 {
+  font-size: 1.2em;
+  color: #555;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee; /* Optional separator */
+  padding-bottom: 5px;
+}
+
+.profile-details-section p, .profile-details-section ul {
+    font-size: 1em;
+    color: #666;
+    line-height: 1.5;
+}
+
+.profile-details-section ul {
+    list-style: disc inside; /* Or 'none' if you prefer custom styling */
+    padding-left: 0;
+}
+
+.profile-details-section ul li {
+    margin-bottom: 5px;
+}
+
+/* Optional: Style for bold labels within sections */
+.profile-details-section strong {
+    color: #333; /* Slightly darker color for labels */
+    margin-right: 5px;
+}
+
+/* Loading state */
+.profile-details-loading {
+  text-align: center;
+  font-size: 1.2em;
+  color: #777;
+}
+
+/* Error state */
+.profile-details-error {
+  text-align: center;
+  font-size: 1.2em;
+  color: #d9534f; /* Red color for errors */
+} 
