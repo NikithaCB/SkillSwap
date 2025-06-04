@@ -1,70 +1,93 @@
-
 /* Basic container styling */
 .profile-details-container {
   max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px auto; /* Center the content */
+  padding: 30px; /* Padding on all sides of the main container */
+  background-color: #f0f2f5; /* Light grey background */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Updated shadow */
+  margin-top: 60px;
+  font-family: sans-serif; /* Consistent font */
+  display: flex; /* Use flexbox for main layout */
+  position: relative; /* Needed for absolute/fixed positioning of children */
+  overflow: hidden; /* Hide overflow if content or pop-up exceeds bounds */
+}
+
+/* Wrapper for profile content (excluding pop-up) */
+.profile-details-content-wrapper {
+    flex-grow: 1; /* Allow content to take available space */
+    /* padding-right will be managed by the main container's padding */
+    /* transition: margin-right 0.3s ease; Add smooth transition */
 }
 
 /* Header with image and name */
 .profile-details-header {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   padding-bottom: 20px;
   border-bottom: 1px solid #eee;
 }
 
 .profile-details-avatar {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   margin-right: 20px;
-  object-fit: cover; /* Ensure image covers the area without stretching */
-  border: 2px solid #ddd;
+  object-fit: cover;
+  border: 3px solid #3498db;
 }
 
 .profile-details-name {
-  font-size: 1.8em;
+  font-size: 2em;
   margin: 0;
   color: #333;
 }
 
+/* Wrapper for skill and bio sections */
+.profile-details-sections {
+    margin-bottom: 20px;
+}
+
 /* Section styling (skills, bio) */
 .profile-details-section {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #eee;
+}
+
+.profile-details-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .profile-details-section h3 {
-  font-size: 1.2em;
+  font-size: 1.3em;
   color: #555;
   margin-bottom: 10px;
-  border-bottom: 1px solid #eee; /* Optional separator */
   padding-bottom: 5px;
 }
 
 .profile-details-section p, .profile-details-section ul {
     font-size: 1em;
     color: #666;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .profile-details-section ul {
-    list-style: disc inside; /* Or 'none' if you prefer custom styling */
+    list-style: disc inside;
     padding-left: 0;
 }
 
 .profile-details-section ul li {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
-/* Optional: Style for bold labels within sections */
+/* Style for bold labels within sections */
 .profile-details-section strong {
-    color: #333; /* Slightly darker color for labels */
-    margin-right: 5px;
+    color: #333;
+    margin-right: 8px;
 }
 
 /* Loading state */
@@ -72,11 +95,89 @@
   text-align: center;
   font-size: 1.2em;
   color: #777;
+  padding: 50px;
 }
 
 /* Error state */
 .profile-details-error {
   text-align: center;
   font-size: 1.2em;
-  color: #d9534f; /* Red color for errors */
-} 
+  color: #e74c3c;
+  padding: 50px;
+}
+
+/* Add styling for the chat button on the profile details page */
+.chat-profile-button {
+    display: block;
+    width: fit-content;
+    margin-top: 20px;
+    padding: 12px 25px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+}
+
+.chat-profile-button:hover {
+    background-color: #27ae60;
+}
+
+/* Styling for the chat pop-up container */
+.chat-popup-container {
+    position: fixed; /* Stay in place even when scrolling */
+    top: 0; /* Align to the top */
+    right: 30px; /* 30px from the right edge */
+    width: 400px; /* Fixed width */
+    height: 100%; /* Full height */
+    background-color: #fff; /* White background */
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.15); /* Shadow on the left */
+    z-index: 1000; /* Sit on top */
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease; /* Smooth transition */
+}
+
+/* Adjust the main profile details container when the chat pop-up is visible */
+.profile-details-container.chat-popup-open {
+    /* When the chat pop-up is open, the main container's padding-right effectively becomes the space for the pop-up */
+    /* No direct margin adjustment needed on the container itself */
+}
+
+/* Adjust the main profile details content when the chat pop-up is visible */
+.profile-details-container.chat-popup-open .profile-details-content-wrapper {
+    /* Calculate margin needed to create space equal to pop-up width + right space + desired gap */
+    /* Pop-up width (400px) + right space (30px from chat-popup-container) + gap (e.g., 20px) = 450px */
+    margin-right: 450px; /* Push main content to the left */
+     transition: margin-right 0.3s ease; /* Smooth transition */
+}
+
+/* Ensure chat content scrolls within the pop-up */
+.chat-popup-container .chat-container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 20px; /* Padding inside the chat pop-up */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Adjust message list to be scrollable within the pop-up */
+.chat-popup-container .messages-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Remove or comment out the redundant rule */
+/*
+.profile-details-content {
+    flex-grow: 1;
+    padding-right: 20px;
+}
+*/

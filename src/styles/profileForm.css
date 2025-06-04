@@ -2,60 +2,80 @@
 
 .profile-form-container {
     max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Center the form */
+    padding: 30px; /* Increased padding */
+    background-color: #fff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Updated shadow */
+    font-family: sans-serif; /* Consistent font */
 }
 
 .profile-form-container h2 {
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    color: #333; /* Dark grey color */
+    margin-bottom: 25px; /* Increased bottom margin */
+    border-bottom: 1px solid #eee; /* Light grey border */
+    padding-bottom: 15px; /* Increased bottom padding */
+    font-size: 1.8em; /* Larger heading */
 }
 
 .profile-form-container form div {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Increased space between form groups */
 }
 
 .profile-form-container label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px; /* Increased space below label */
     font-weight: bold;
-    color: #555;
+    color: #555; /* Darker grey color */
+    font-size: 1em; /* Standard font size */
 }
 
 .profile-form-container input[type="text"],
 .profile-form-container textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
+    padding: 10px 15px; /* Added horizontal padding */
+    border: 1px solid #ccc; /* Grey border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 1em; /* Standard font size */
     box-sizing: border-box; /* Include padding and border in element's total width and height */
+    transition: border-color 0.3s ease; /* Smooth transition for focus */
+}
+
+.profile-form-container input[type="text"]:focus,
+.profile-form-container textarea:focus {
+    outline: none; /* Remove default outline */
+    border-color: #3498db; /* Highlight border on focus */
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Add subtle shadow on focus */
 }
 
 .profile-form-container textarea {
     resize: vertical; /* Allow vertical resizing */
-    min-height: 100px; /* Minimum height for the textarea */
+    min-height: 120px; /* Slightly increased minimum height */
 }
 
 .profile-form-container button[type="submit"] {
     display: block;
     width: 100%;
-    padding: 10px;
-    background-color: #007bff; /* Example primary color */
+    padding: 12px 20px; /* Increased padding */
+    background-color: #2ecc71; /* Green button color from dashboard */
     color: white;
     border: none;
-    border-radius: 4px;
-    font-size: 1.1em;
+    border-radius: 5px; /* Match dashboard button radius */
+    font-size: 1.1em; /* Slightly larger font */
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
 }
 
 .profile-form-container button[type="submit"]:hover {
-    background-color: #0056b3; /* Darker shade on hover */
+    background-color: #27ae60; /* Darker green on hover */
 }
+
+/* Optional: Style for error messages if you add them */
+/*
+.error-message {
+    color: #e74c3c;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+*/

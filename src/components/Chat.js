@@ -14,8 +14,9 @@ import { db } from "../utils/firebase";
 import "../styles/chat.css";
 import { useNavigate } from "react-router-dom";
 
-function Chat({ currentUser }) {
-  const { recipientId: recipientMongoId } = useParams();
+function Chat({ currentUser, onClose, recipientId }) {
+  const { recipientId: recipientIdFromUrl } = useParams();
+  const currentRecipientId = recipientId || recipientIdFromUrl;
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [recipientName, setRecipientName] = useState("");
@@ -53,19 +54,22 @@ function Chat({ currentUser }) {
   // Fetch recipient's name and Firebase UID
   useEffect(() => {
     const fetchRecipientData = async () => {
-      if (!recipientMongoId) return;
+      if (!currentRecipientId) {
+        setIsLoading(false);
+        setError("No recipient ID provided.");
+        return;
+      }
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/users/${recipientMongoId}`
+          `http://localhost:5000/api/users/${currentRecipientId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("Fetched recipient data:", data); // Log fetched data
+        console.log("Fetched recipient data:", data);
         setRecipientName(data.name || "Unknown User");
-        // Use firebaseUid if available, otherwise fall back to googleId
         if (data.firebaseUid) {
           setRecipientFirebaseUid(data.firebaseUid);
           console.log("Using recipient firebaseUid:", data.firebaseUid);
@@ -90,8 +94,13 @@ function Chat({ currentUser }) {
       }
     };
 
-    fetchRecipientData();
-  }, [recipientMongoId]);
+    if (currentRecipientId) {
+      fetchRecipientData();
+    } else {
+      setIsLoading(false);
+      setError("No recipient specified for chat.");
+    }
+  }, [currentRecipientId]);
 
   // Initialize or get chat document and set up message listener
   useEffect(() => {
@@ -211,15 +220,15 @@ function Chat({ currentUser }) {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    if (onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
   };
 
   if (!currentUser) {
     return <div className="chat-error">Please log in to chat.</div>;
-  }
-
-  if (!recipientMongoId) {
-    return <div className="chat-error">No recipient specified for chat.</div>;
   }
 
   if (isLoading && !recipientFirebaseUid) {
@@ -229,9 +238,18 @@ function Chat({ currentUser }) {
   if (
     error &&
     (error.includes("Failed to load recipient information") ||
-     error.includes("Recipient data incomplete"))
+      error.includes("No recipient ID provided.") ||
+      error.includes("Invalid chat ID generated"))
   ) {
     return <div className="chat-error-message">{error}</div>;
+  }
+
+  if (!recipientFirebaseUid && !isLoading && !error) {
+    return (
+      <div className="chat-error">
+        Recipient data not loaded. Cannot start chat.
+      </div>
+    );
   }
 
   return (
@@ -242,7 +260,9 @@ function Chat({ currentUser }) {
         </button>
         <h2>Chat with {recipientName}</h2>
       </div>
-      {error && <div className="chat-error-message">{error}</div>}
+      {error && !error.includes("recipient") && (
+        <div className="chat-error-message">{error}</div>
+      )}
       <div className="messages-list">
         {isLoading ? (
           <div className="chat-loading">Loading messages...</div>
@@ -257,16 +277,13 @@ function Chat({ currentUser }) {
           }),
           currentUser && currentUser.id ? (
             messages.map((message) => {
-              // Add log inside the map to see individual message senderId and currentUser.id
               console.log("Chat.js: Mapping message", message.id, {
                 messageSenderId: message.senderId,
                 currentUserId: currentUser.id,
               });
 
-              // Determine the class name more explicitly
               let messageClass = "message";
 
-              // Use explicit checks with default empty strings
               const senderId = message.senderId || "";
               const currentUserId = currentUser.id || "";
 
@@ -277,7 +294,7 @@ function Chat({ currentUser }) {
                   messageClass += " received";
                 }
               } else {
-                messageClass += " unknown-sender"; // Fallback
+                messageClass += " unknown-sender";
               }
 
               return (

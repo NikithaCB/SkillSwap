@@ -3,8 +3,7 @@ import axios from "axios";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebase";
-import '../styles/dashboard.css';
-
+import "../styles/dashboard.css";
 
 function Dashboard({ user }) {
   const [users, setUsers] = useState([]);
@@ -12,6 +11,7 @@ function Dashboard({ user }) {
   const [currentUserProfileExists, setCurrentUserProfileExists] =
     useState(false);
   const navigate = useNavigate();
+  const [showTeach, setShowTeach] = useState(true); // State for toggle
 
   useEffect(() => {
     axios
@@ -41,11 +41,16 @@ function Dashboard({ user }) {
     }
   }, [user]);
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.teachSkills.join(",").toLowerCase().includes(search.toLowerCase()) ||
-      user.learnSkills.join(",").toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter users based on search query and toggle state
+  const filteredUsers = users.filter((user) => {
+    const skillsToSearch = showTeach ? user.teachSkills : user.learnSkills;
+    const skillsMatch = skillsToSearch
+      .join(",")
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    const nameMatch = user.name.toLowerCase().includes(search.toLowerCase());
+    return skillsMatch || nameMatch; // Search by skills OR name
+  });
 
   const handleLogout = async () => {
     try {
@@ -67,39 +72,92 @@ function Dashboard({ user }) {
 
   return (
     <div className="dashboard-container">
-      <h2 className="dashboard-title">Welcome, {user.name}</h2>
-      <input
-        className="search-input"
-        type="text"
-        placeholder="Search skills..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <button onClick={handleLogout} className="logout-button">Logout</button>
-      <button className="profile-button"
-        title={
-          currentUserProfileExists ? "Edit your profile" : "Create your profile"
-        }
-        onClick={handleCreateProfile}
-      >
-        {currentUserProfileExists ? "Edit your profile" : "Create your profile"}
-      </button>
-      <ul className="user-list">
-        {filteredUsers.map((user) => (
-          <li 
-            key={user._id}
-            onClick={() => handleViewProfile(user._id)}
-            style={{ cursor: "pointer" }}
-            className="user-list-item"
+      <header className="dashboard-header">
+        <div className="logo">Welcome to SkillSwap, {user.name} </div> {/* Add logo/app name */}
+        <div className="header-right">
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
+          {/* Assuming Edit/Create profile button remains in the header */}
+          <button
+            className="profile-button"
+            title={
+              currentUserProfileExists
+                ? "Edit your profile"
+                : "Create your profile"
+            }
+            onClick={handleCreateProfile}
           >
-            <img className="user-photo" src={user.photo} alt={user.name} width={40} />
-            <strong className="user-name">{user.name}</strong>
-            <div className="user-info"> <strong>Teaches:</strong> {user.teachSkills.join(", ")}</div>
-            <div className="user-info"> <strong>Wants to learn:</strong> {user.learnSkills.join(", ")}</div>
-            <div className="user-info"> <strong>Bio:</strong> {user.bio}</div>
-          </li>
-        ))}
-      </ul>
+            {currentUserProfileExists
+              ? "Edit your profile"
+              : "Create your profile"}
+          </button>
+        </div>
+      </header>
+
+      {/* Skill Recommendations Section */}
+      <div className="recommendations-section">
+        <h2 className="recommendations-title">Skill Recommendations</h2>
+
+        {/* Teach/Learn Toggle and Search */}
+        <div className="controls">
+          <div className="toggle-switch">
+            <button
+              className={`toggle-button ${showTeach ? "active" : ""}`}
+              onClick={() => setShowTeach(true)}
+            >
+              Teach
+            </button>
+            <button
+              className={`toggle-button ${!showTeach ? "active" : ""}`}
+              onClick={() => setShowTeach(false)}
+            >
+              Learn
+            </button>
+          </div>
+          <input
+            className="search-input"
+            type="text"
+            placeholder={`Search ${
+              showTeach ? "teach" : "learn"
+            } skills or name...`}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        {/* User Grid */}
+        <div className="user-grid">
+          {filteredUsers.map((user) => (
+            <div key={user._id} className="user-card">
+              <div className="user-card-header">
+                <img className="user-photo" src={user.photo} alt={user.name} />
+                <div className="user-card-info">
+                  <strong className="user-name">{user.name}</strong>
+                  {/* Add placeholder for stars/rating if needed later */}
+                </div>
+              </div>
+              <div className="user-card-skills">
+                <div className="skills-teach">
+                  <strong>Teaches:</strong> {user.teachSkills.join(", ")}
+                </div>
+                <div className="skills-learn">
+                  <strong>Wants to learn:</strong> {user.learnSkills.join(", ")}
+                </div>
+              </div>
+              <div className="user-card-bio">
+                <strong>Bio:</strong> {user.bio}
+              </div>
+              <button
+                className="view-profile-button"
+                onClick={() => handleViewProfile(user._id)}
+              >
+                View Profile
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,117 +1,178 @@
 .dashboard-container {
-  margin: 0 auto;
-  padding: 20px;
-  background-color: hwb(0 64% 34%);  
-
+  margin: 0 auto; /* Center the container */
+  padding: 0; /* Remove overall padding, sections will have padding */
+  background-color: #f0f2f5; /* Light grey background */
+  font-family: sans-serif; /* Modern font */
+  min-height: 100vh; /* Ensure container is at least full viewport height */
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack children vertically */
 }
 
-.dashboard-title {
-  font-size: 24px;
-  margin-bottom: 20px;
+.dashboard-header {
+    display: flex;
+    justify-content: space-between; /* Space out logo and right items */
+    align-items: center;
+    padding: 15px 30px; /* Padding top/bottom and left/right */
+    background-color: #fff; /* White background for header */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
+.logo {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #333; /* Dark grey color */
+}
 
-.search-input {
-  width: 30%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  
-}           
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between items in header right */
+}
+
+.logout-button, .profile-button, .view-profile-button {
+  padding: 8px 15px; /* Adjust padding */
+  border: none;
+  border-radius: 5px; /* Slightly more rounded corners */
+  cursor: pointer;
+  font-size: 0.9em; /* Slightly smaller font */
+  transition: background-color 0.3s ease;
+}
 
 .logout-button {
-  background-color: #f00;
+  background-color: #e74c3c; /* Reddish */
   color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  margin-left: 20px;
-  margin-right: 10px;
+}
+
+.logout-button:hover {
+  background-color: #c0392b; /* Darker reddish */
 }
 
 .profile-button {
-  background-color: #00f;
+  background-color: #3498db; /* Bluish */
   color: #fff;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
-}   
+}
 
-.user-list {
-  list-style: none;
-  padding: 0;
-  margin-left: 20px;
-  margin-right: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-}   
+.profile-button:hover {
+  background-color: #2980b9; /* Darker bluish */
+}
+
+.search-icon {
+    font-size: 1.2em;
+    cursor: pointer;
+    color: #555; /* Darker grey */
+}
+
+.recommendations-section {
+  padding: 20px 30px 40px; /* Add 40px padding to the bottom */
+  flex-grow: 1; /* Allow this section to grow and fill space */
+}
+
+.recommendations-title {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: #333; /* Dark grey color */
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Space between toggle and search */
+    margin-bottom: 20px;
+}
+
+.toggle-switch {
+    display: flex;
+    border: 1px solid #bdc3c7; /* Light grey border */
+    border-radius: 5px; /* Rounded corners */
+    overflow: hidden; /* Hide overflow for rounded corners */
+}
+
+.toggle-button {
+    padding: 8px 15px;
+    border: none;
+    background-color: transparent; /* Transparent background by default */
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color: #555; /* Default text color */
+}
+
+.toggle-button.active {
+    background-color: #3498db; /* Bluish background for active */
+    color: #fff; /* White text for active */
+}
+
+.search-input {
+  width: 250px; /* Fixed width, adjust as needed */
+  padding: 8px 15px; /* Adjust padding */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9em; /* Match toggle button font size */
+}
+
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Space between grid items */
+}
+
+.user-card {
+  background-color: #fff; /* White background for cards */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 20px;
+  display: flex; /* Flexbox for content within the card */
+  flex-direction: column;
+  justify-content: space-between; /* Space out content */
+}
+
+.user-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
 
 .user-photo {
-  width: 40px;
-  height: 40px;
+  width: 50px; /* Larger photo */
+  height: 50px;
   border-radius: 50%;
-}   
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.user-card-info {
+  flex-grow: 1; /* Take up remaining space */
+}
 
 .user-name {
   font-weight: bold;
-  font-size: 18px;
-
-}   
-
-.user-info {
-  margin-top: 5px;
+  font-size: 1.1em;
+  color: #333;
+  margin: 0;
 }
 
-.user-list li {
-  display: flex;
+/* Add styling for stars/rating if you implement it */
+
+.user-card-skills, .user-card-bio {
+  font-size: 0.9em;
+  color: #555;
   margin-bottom: 10px;
-  padding: 10px;
-  background-color: #fff;       
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-left: 20px;
-  margin-right: 20px;
-}   
+  line-height: 1.4;
+}
 
-.user-list li:hover {
-  background-color: #f0f0f0;
-}      
+.user-card-skills strong, .user-card-bio strong {
+    color: #333;
+    margin-right: 5px;
+}
 
-.user-list li:active {
-  background-color: #000;
+.view-profile-button {
+  background-color: #5cb85c; /* Greenish */
   color: #fff;
-}   
+  align-self: flex-start; /* Align button to the start */
+  margin-top: 10px; /* Space above the button */
+}
 
-.user-list li:focus {
-  background-color: #000;
-  color: #fff;
-}   
-
-.user-list li:focus-within {
-  background-color: #000;   
-  color: #fff;
-}   
-
-.user-list li:focus-visible {
-  background-color: #000;
-  color: #fff;
-}   
-
-.user-list-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-left: 20px;
-  margin-right: 20px; 
+.view-profile-button:hover {
+  background-color: #4cae4c; /* Darker greenish */
 }

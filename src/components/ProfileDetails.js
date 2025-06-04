@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"; // To get userId from URL
 import axios from "axios";
 import "../styles/profileDetails.css"; // Import the CSS file
 import { useNavigate } from "react-router-dom";
+import Chat from "./Chat"; // Import the Chat component
 
 function ProfileDetails({ currentUser }) {
   // Receive currentUser prop
@@ -11,6 +12,7 @@ function ProfileDetails({ currentUser }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [showChatPopup, setShowChatPopup] = useState(false); // State to control chat pop-up visibility
 
   useEffect(() => {
     console.log("ProfileDetails.js: useEffect triggered.");
@@ -92,21 +94,28 @@ function ProfileDetails({ currentUser }) {
     // Only depend on currentUser.id if you need to refetch when *the* current user changes, not just their data
   }, [userId, currentUser]); // Keep userId and currentUser as dependencies
 
+  // Modify handleChat to show the pop-up
   const handleChat = () => {
     console.log("ProfileDetails.js: Chat button clicked.");
     if (profile && profile._id) {
       console.log(
-        "ProfileDetails.js: Navigating to chat with user:",
+        "ProfileDetails.js: Showing chat pop-up for user:",
         profile._id
       );
-      // Navigate to the chat route, passing the profile user's ID as the recipientId
-      navigate(`/chat/${profile._id}`);
+      setShowChatPopup(true); // Set state to show the pop-up
+      // No navigation needed here
     } else {
       console.error(
         "ProfileDetails.js: Cannot initiate chat, profile or profile._id is missing."
       );
       alert("Cannot initiate chat at this time.");
     }
+  };
+
+  // Function to close the chat pop-up
+  const handleCloseChat = () => {
+    console.log("ProfileDetails.js: Closing chat pop-up.");
+    setShowChatPopup(false); // Set state to hide the pop-up
   };
 
   if (loading) {
@@ -128,67 +137,90 @@ function ProfileDetails({ currentUser }) {
 
   return (
     <div className="profile-details-container">
-      <div className="profile-details-header">
-        {/* Display profile photo if available, otherwise a placeholder */}
-        {profile.photo ? (
-          <img
-            src={profile.photo}
-            alt={`${profile.name}'s profile`}
-            className="profile-details-avatar"
-          />
-        ) : (
-          <div className="profile-details-avatar">
-            {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
-          </div> // Uppercase initial
+      {/* Wrap profile content excluding pop-up */}
+      <div className="profile-details-content-wrapper">
+        <div className="profile-details-header">
+          {/* Display profile photo if available, otherwise a placeholder */}
+          {profile.photo ? (
+            <img
+              src={profile.photo}
+              alt={`${profile.name}'s profile`}
+              className="profile-details-avatar"
+            />
+          ) : (
+            <div className="profile-details-avatar">
+              {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
+            </div> // Uppercase initial
+          )}
+          <h2 className="profile-details-name">{profile.name || "No Name"}</h2>
+        </div>
+
+        {/* Profile Sections */}
+        <div className="profile-details-sections">
+          <div className="profile-details-section">
+            <h3>
+              <strong>Teaches:</strong>
+            </h3>
+            {profile.teachSkills && profile.teachSkills.length > 0 ? (
+              <ul>
+                {profile.teachSkills.map((skill, index) => (
+                  <li key={index}>{skill}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No teaching skills listed.</p>
+            )}
+          </div>
+
+          <div className="profile-details-section">
+            <h3>
+              <strong>Wants to learn:</strong>
+            </h3>
+            {profile.learnSkills && profile.learnSkills.length > 0 ? (
+              <ul>
+                {profile.learnSkills.map((skill, index) => (
+                  <li key={index}>{skill}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No learning skills listed.</p>
+            )}
+          </div>
+
+          <div className="profile-details-section">
+            <h3>
+              <strong>Bio:</strong>
+            </h3>
+            {profile.bio ? <p>{profile.bio}</p> : <p>No bio provided.</p>}
+          </div>
+        </div>
+
+        {/* Only show chat button if viewing another user's profile */}
+        {currentUser && profile._id && currentUser._id !== profile._id && (
+          <button onClick={handleChat} className="chat-profile-button">
+            Chat with {profile.name ? profile.name.split(" ")[0] : "User"}
+          </button>
         )}
-        <h2 className="profile-details-name">{profile.name || "No Name"}</h2>
       </div>
 
-      <div className="profile-details-section">
-        <h3>
-          <strong>Teaches:</strong>
-        </h3>
-        {profile.teachSkills && profile.teachSkills.length > 0 ? (
-          <ul>
-            {profile.teachSkills.map((skill, index) => (
-              <li key={index}>{skill}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No teaching skills listed.</p>
+      {/* Chat Pop-up */}
+      {showChatPopup &&
+        profile &&
+        profile._id && ( // Conditionally render the chat pop-up
+          <div className="chat-popup-container">
+            {" "}
+            {/* Add a container for styling */}
+            {/* Pass necessary props to Chat component */}
+            {/* Adapt the Chat component's back button to call handleCloseChat */}
+            <Chat
+              currentUser={currentUser}
+              recipientId={profile._id}
+              // You might need to pass a prop to Chat to indicate it's in pop-up mode
+              // and modify its internal back button logic to call a prop function instead of navigate(-1)
+              onClose={handleCloseChat} // Pass the close handler
+            />
+          </div>
         )}
-      </div>
-
-      <div className="profile-details-section">
-        <h3>
-          <strong>Wants to learn:</strong>
-        </h3>
-        {profile.learnSkills && profile.learnSkills.length > 0 ? (
-          <ul>
-            {profile.learnSkills.map((skill, index) => (
-              <li key={index}>{skill}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No learning skills listed.</p>
-        )}
-      </div>
-
-      <div className="profile-details-section">
-        <h3>
-          <strong>Bio:</strong>
-        </h3>
-        {profile.bio ? <p>{profile.bio}</p> : <p>No bio provided.</p>}
-      </div>
-
-      {/* Add more profile details here as needed */}
-
-      {/* Only show chat button if viewing another user's profile */}
-      {currentUser && profile._id && currentUser._id !== profile._id && (
-        <button onClick={handleChat}>
-          Chat with {profile.name ? profile.name.split(" ")[0] : "User"}
-        </button>
-      )}
 
       {/* Optional: Add a back button */}
       {/* <button onClick={() => navigate(-1)}>Back</button> */}
