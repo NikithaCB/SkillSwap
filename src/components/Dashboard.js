@@ -3,6 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
 
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 function Dashboard({ user, initiateLogout }) {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -14,7 +17,7 @@ function Dashboard({ user, initiateLogout }) {
   useEffect(() => {
     console.log("Dashboard.js: Fetching all users.");
     axios
-      .get("http://localhost:5000/api/users")
+      .get(`${BACKEND_URL}/api/users`)
       .then((res) => {
         console.log("Dashboard.js: Users fetched successfully.", res.data);
         setUsers(res.data);
@@ -31,7 +34,7 @@ function Dashboard({ user, initiateLogout }) {
         user.uid
       );
       axios
-        .get(`http://localhost:5000/api/users/by-google-id/${user.uid}`)
+        .get(`${BACKEND_URL}/api/users/by-google-id/${user.uid}`)
         .then((res) => {
           console.log("Dashboard.js: Current user profile found.", res.data);
           setCurrentUserProfileExists(true);

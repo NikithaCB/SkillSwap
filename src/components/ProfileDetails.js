@@ -5,6 +5,9 @@ import "../styles/profileDetails.css"; // Import the CSS file
 import { useNavigate } from "react-router-dom";
 import Chat from "./Chat"; // Import the Chat component
 
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 function ProfileDetails({ currentUser }) {
   // Receive currentUser prop
   const { userId } = useParams(); // Get userId from URL params
@@ -28,7 +31,7 @@ function ProfileDetails({ currentUser }) {
           );
           // Fetch profile by ID if userId is in the URL
           // Make sure this backend route is correctly implemented to find by MongoDB _id
-          const profileUrl = `http://localhost:5000/api/users/${userId}`; // **Corrected URL with port 5000**
+          const profileUrl = `${BACKEND_URL}/api/users/${userId}`; // **Corrected URL using BACKEND_URL**
           console.log(
             "ProfileDetails.js: Fetching profile from URL:",
             profileUrl
@@ -224,7 +227,7 @@ function ProfileDetails({ currentUser }) {
             {" "}
             {/* Add a container for styling */}
             {/* Pass necessary props to Chat component */}
-            {/* Adapt the Chat component's back button to call handleCloseChat */}
+            {/* Adapt the Chat component's back button to call a prop function instead of navigate(-1) */}
             <Chat
               currentUser={currentUser}
               recipientId={profile._id}
