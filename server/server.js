@@ -7,16 +7,12 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://skillswaphive.netlify.app', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(express.json());
-
-// mongoose
-//   .connect(process.env.MONGO_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log("MongoDB connected"))
-//   .catch((err) => console.log(err));
 
 mongoose
   .connect(process.env.MONGO_URI) // Removed options
