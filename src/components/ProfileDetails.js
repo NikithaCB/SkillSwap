@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; 
+import { useParams } from "react-router-dom";
 import axios from "axios";
-import "../styles/profileDetails.css"; 
+import "../styles/profileDetails.css";
 import { useNavigate } from "react-router-dom";
-import Chat from "./Chat"; 
+import Chat from "./Chat";
 
 const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
 function ProfileDetails({ currentUser }) {
   // Receive currentUser prop
-  const { userId } = useParams(); 
+  const { userId } = useParams();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const [showChatPopup, setShowChatPopup] = useState(false); 
+  const [showChatPopup, setShowChatPopup] = useState(false);
 
   useEffect(() => {
     console.log("ProfileDetails.js: useEffect triggered.");
@@ -29,12 +29,12 @@ function ProfileDetails({ currentUser }) {
           console.log(
             `ProfileDetails.js: userId found in URL: ${userId}. Attempting to fetch profile by ID.`
           );
-         const profileUrl = `${BACKEND_URL}/api/users/${userId}`; 
+          const profileUrl = `${BACKEND_URL}/api/users/${userId}`;
           console.log(
             "ProfileDetails.js: Fetching profile from URL:",
             profileUrl
-          ); 
-          const res = await axios.get(profileUrl); 
+          );
+          const res = await axios.get(profileUrl);
           profileData = res.data;
           console.log(
             "ProfileDetails.js: Profile fetched successfully by ID.",
@@ -45,7 +45,7 @@ function ProfileDetails({ currentUser }) {
             "ProfileDetails.js: No userId in URL, using currentUser prop:",
             currentUser.id
           );
-     
+
           profileData = currentUser;
           console.log(
             "ProfileDetails.js: Using currentUser prop for profile data.",
@@ -89,10 +89,8 @@ function ProfileDetails({ currentUser }) {
       setLoading(false);
       setError("No user information to display profile.");
     }
-
   }, [userId, currentUser]); // Keep userId and currentUser as dependencies
 
-  // Modify handleChat to show the pop-up with Firebase UID check
   const handleChat = () => {
     console.log("ProfileDetails.js: Chat button clicked.");
     if (!profile || !profile._id) {
@@ -100,28 +98,22 @@ function ProfileDetails({ currentUser }) {
         "ProfileDetails.js: Cannot initiate chat, profile or profile._id is missing."
       );
       alert("Cannot initiate chat at this time.");
-      return; // Exit if profile data is incomplete
-    }
-
-    // Check if the *current* user has a firebaseUid. This is required for generating chat IDs.
-    if (!currentUser || !currentUser.id || !currentUser.firebaseUid) {
-      console.log("ProfileDetails.js: Current user Firebase UID not found.");
-      const confirmUpdate = window.confirm(
-        "To start a chat, your profile needs to be complete. Please update your profile with necessary information including linking your account to enable chat. Do you want to go to your Profile Form now?"
-      );
-      if (confirmUpdate) {
-        navigate("/create-profile");
-      }
       return; 
     }
 
-    console.log(
-      "ProfileDetails.js: Current user Firebase UID found. Proceeding to show chat."
-    );
-    setShowChatPopup(true); // Set state to show the pop-up
+    if (currentUser) {
+      console.log(
+        "ProfileDetails.js: Current user is authenticated. Proceeding to show chat."
+      );
+      setShowChatPopup(true); // Set state to show the pop-up
+    } else {
+      console.log(
+        "ProfileDetails.js: Current user not authenticated. Cannot show chat."
+      );
+      alert("Please log in to start a chat.");
+    }
   };
 
-  // Function to close the chat pop-up
   const handleCloseChat = () => {
     console.log("ProfileDetails.js: Closing chat pop-up.");
     setShowChatPopup(false); // Set state to hide the pop-up
@@ -135,7 +127,7 @@ function ProfileDetails({ currentUser }) {
     return <div className="profile-details-error">Error: {error}</div>;
   }
 
-  // If profile is null after loading and no error, handle this case
+  // If profile is null after loading and no error
   if (!profile) {
     return (
       <div className="profile-details-error">
@@ -157,7 +149,7 @@ function ProfileDetails({ currentUser }) {
           ) : (
             <div className="profile-details-avatar">
               {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
-            </div> 
+            </div>
           )}
           <h2 className="profile-details-name">{profile.name || "No Name"}</h2>
         </div>
@@ -210,18 +202,15 @@ function ProfileDetails({ currentUser }) {
       </div>
 
       {/* Chat Pop-up */}
-      {showChatPopup &&
-        profile &&
-        profile._id && (
-          <div className="chat-popup-container">
-            <Chat
-              currentUser={currentUser}
-              recipientId={profile._id}
-              onClose={handleCloseChat} 
-            />
-          </div>
-        )}
-
+      {showChatPopup && profile && profile._id && (
+        <div className="chat-popup-container">
+          <Chat
+            currentUser={currentUser}
+            recipientId={profile._id}
+            onClose={handleCloseChat}
+          />
+        </div>
+      )}
     </div>
   );
 }
