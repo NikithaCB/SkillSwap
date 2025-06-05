@@ -42,6 +42,9 @@ function ProfileForm({ currentUser, onProfileSave }) {
       profileDataToSend
     );
 
+    const BACKEND_URL =
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
     try {
       const token = localStorage.getItem("token");
 
@@ -51,18 +54,26 @@ function ProfileForm({ currentUser, onProfileSave }) {
         return;
       }
 
-      const res = await axios.post(
-        "http://localhost:5000/api/users",
-        profileDataToSend,
-        {
-          headers: {
-            "x-auth-token": token,
-          },
-        }
-      );
-      console.log("Profile saved successfully:", res.data);
-      onProfileSave(res.data);
-      alert("Profile saved successfully!");
+      const res = await fetch(`${BACKEND_URL}/api/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(profileDataToSend),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log("Profile saved successfully:", data);
+        onProfileSave(data);
+        alert("Profile saved successfully!");
+      } else {
+        console.error("Error saving profile:", res.statusText);
+        alert(
+          "Sorry for the inconvenience, there was an error saving your data. Please try again."
+        );
+      }
     } catch (err) {
       console.error(
         "Error saving profile from frontend:",

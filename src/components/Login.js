@@ -13,6 +13,9 @@ import { FaGoogle } from "react-icons/fa";
 
 import axios from "axios"; // Import axios
 
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 function Login({ onSuccessfulAuth }) {
   const navigate = useNavigate();
 
@@ -30,15 +33,12 @@ function Login({ onSuccessfulAuth }) {
 
       // Send Firebase user data to backend to get JWT
       console.log("Sending Firebase user data to backend for JWT...");
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/firebase-login",
-        {
-          firebaseUid: firebaseUser.uid,
-          name: firebaseUser.displayName,
-          email: firebaseUser.email,
-          photo: firebaseUser.photoURL,
-        }
-      );
+      const res = await axios.post(`${BACKEND_URL}/api/auth/firebase-login`, {
+        firebaseUid: firebaseUser.uid,
+        name: firebaseUser.displayName,
+        email: firebaseUser.email,
+        photo: firebaseUser.photoURL,
+      });
 
       console.log("Backend JWT received:", res.data.token);
 
@@ -81,15 +81,12 @@ function Login({ onSuccessfulAuth }) {
       );
       // Note: Firebase email/password doesn't directly provide name/photo on signup.
       // Name/photo will likely be set via the profile form later or linked if email existed.
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/firebase-login",
-        {
-          firebaseUid: firebaseUser.uid,
-          name: firebaseUser.displayName, // This might be null initially for email/password Firebase users
-          email: firebaseUser.email,
-          photo: firebaseUser.photoURL, // This will be null initially for email/password Firebase users
-        }
-      );
+      const res = await axios.post(`${BACKEND_URL}/api/auth/firebase-login`, {
+        firebaseUid: firebaseUser.uid,
+        name: firebaseUser.displayName, // This might be null initially for email/password Firebase users
+        email: firebaseUser.email,
+        photo: firebaseUser.photoURL, // This will be null initially for email/password Firebase users
+      });
 
       console.log("Backend JWT received after registration:", res.data.token);
       localStorage.setItem("token", res.data.token);
@@ -116,15 +113,12 @@ function Login({ onSuccessfulAuth }) {
       // Now call backend to find user in MongoDB (by firebaseUid) and get JWT
       console.log("Sending Firebase user data to backend after login...");
       // Even on login, send the basic Firebase user info to ensure consistency and get the correct JWT
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/firebase-login",
-        {
-          firebaseUid: firebaseUser.uid,
-          name: firebaseUser.displayName, // Will be null if not set in Firebase
-          email: firebaseUser.email,
-          photo: firebaseUser.photoURL, // Will be null if not set in Firebase
-        }
-      );
+      const res = await axios.post(`${BACKEND_URL}/api/auth/firebase-login`, {
+        firebaseUid: firebaseUser.uid,
+        name: firebaseUser.displayName, // Will be null if not set in Firebase
+        email: firebaseUser.email,
+        photo: firebaseUser.photoURL, // Will be null if not set in Firebase
+      });
 
       console.log("Backend JWT received after login:", res.data.token);
       localStorage.setItem("token", res.data.token);

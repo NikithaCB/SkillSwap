@@ -14,6 +14,9 @@ import { db } from "../utils/firebase";
 import "../styles/chat.css";
 import { useNavigate } from "react-router-dom";
 
+const BACKEND_URL =
+  process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
 function Chat({ currentUser, onClose, recipientId }) {
   const { recipientId: recipientIdFromUrl } = useParams();
   const currentRecipientId = recipientId || recipientIdFromUrl;
@@ -62,7 +65,7 @@ function Chat({ currentUser, onClose, recipientId }) {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/users/${currentRecipientId}`
+          `${BACKEND_URL}/api/users/${currentRecipientId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -8,7 +8,6 @@ const authMiddleware = require("../middleware/authMiddleware"); // Import the au
 router.post("/", authMiddleware, async (req, res) => {
   // Add authMiddleware here
   console.log("Received POST request to /api/users (authenticated)");
-  console.log("Request body:", req.body);
   // Extract profile fields and firebaseUid from the request body
   const { name, email, photo, teachSkills, learnSkills, bio, firebaseUid } =
     req.body;
