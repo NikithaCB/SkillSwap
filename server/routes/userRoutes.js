@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware"); // Import the auth middleware
-const { Firestore } = require("firebase/firestore");
 
 // Create or update user
 // This route is now protected and updates the authenticated user's profile
