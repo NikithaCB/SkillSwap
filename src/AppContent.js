@@ -40,9 +40,9 @@ function AppContent() {
         console.log("AppContent.js: Found JWT. Attempting to validate...");
         setAuthToken(token);
         try {
-          const res = await axios.get("${BACKEND_URL}/api/auth/user");
+          const res = await axios.get(`${BACKEND_URL}/api/auth/user`);
           // If JWT valid, set user data from backend response
-          setCurrentUser(res.data); 
+          setCurrentUser(res.data);
           console.log(
             "AppContent.js: Successfully loaded user from JWT.",
             res.data
@@ -58,7 +58,6 @@ function AppContent() {
         }
       }
 
-      
       console.log(
         "AppContent.js: Setting up Firebase onAuthStateChanged listener."
       );
@@ -127,7 +126,6 @@ function AppContent() {
     };
 
     checkAuthStatus();
-
   }, []);
 
   // Determine isAuthenticated based on the presence of currentUser
@@ -154,8 +152,8 @@ function AppContent() {
       );
       setAuthToken(token);
       try {
-        const res = await axios.get("${BACKEND_URL}/api/auth/user");
-       
+        const res = await axios.get(`${BACKEND_URL}/api/auth/user`);
+
         setCurrentUser(res.data);
         console.log(
           "AppContent.js: handleSuccessfulAuth: Successfully loaded user from JWT.",
@@ -254,9 +252,47 @@ function AppContent() {
     console.log("AppContent.js: Reset isLoggingOut.current to false.");
   };
 
+  // This effect handles navigation based on authentication status and loading state.
+  useEffect(() => {
+    console.log(
+      "AppContent.js: Navigation useEffect triggered. loading:",
+      loading,
+      "isAuthenticated:",
+      isAuthenticated
+    );
+    // Wait until initial loading is complete to decide where to navigate.
+    if (!loading) {
+      if (isAuthenticated) {
+        console.log(
+          "AppContent.js: Navigation useEffect: User is authenticated, navigating to dashboard."
+        );
+        // User is authenticated, navigate to dashboard.
+        // Check if already on dashboard to avoid infinite loop
+        if (window.location.pathname === "/login") {
+          navigate("/dashboard");
+        }
+      } else {
+        console.log(
+          "AppContent.js: Navigation useEffect: User is not authenticated, navigating to login."
+        );
+        // User is not authenticated, navigate to login.
+        // Check if already on login to avoid infinite loop
+        if (window.location.pathname !== "/login") {
+          navigate("/login");
+        }
+      }
+    } else {
+      console.log(
+        "AppContent.js: Navigation useEffect: Still loading, not navigating."
+      );
+    }
+    // Depend on loading and isAuthenticated state changes
+  }, [loading, isAuthenticated, navigate]); // Include navigate in dependencies as recommended by hooks rules
+
+  // Optional: Render a loading spinner or placeholder while loading is true
   if (loading) {
-    // Optionally show a loading spinner or splash screen while checking auth state
-    return <div>Loading authentication...</div>;
+    console.log("AppContent.js: Rendering loading spinner.");
+    return <div className="loading-spinner">Loading...</div>; // Replace with a real spinner component
   }
 
   return (
