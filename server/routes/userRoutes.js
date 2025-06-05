@@ -25,13 +25,8 @@ router.post("/", authMiddleware, async (req, res) => {
 
     // Update user fields.
     user.name = name !== undefined ? name : user.name;
-    // Only update email if it's provided and different, add checks if needed for uniqueness
     if (email !== undefined && user.email !== email) {
-      // You might want to add a check here if the new email already exists
-      // const existingUserWithEmail = await User.findOne({ email });
-      // if (existingUserWithEmail && existingUserWithEmail.id !== user.id) {
-      //     return res.status(400).json({ msg: 'Email already in use' });
-      // }
+    
       user.email = email;
     }
     user.photo = photo !== undefined ? photo : user.photo;
@@ -53,8 +48,7 @@ router.post("/", authMiddleware, async (req, res) => {
 
     res.json(user);
   } catch (err) {
-    console.error("Error updating user profile:", err); // Log the full error
-    // Check for Mongoose validation errors
+    console.error("Error updating user profile:", err); 
     if (err.name === "ValidationError") {
       return res.status(400).json({ msg: err.message });
     }
@@ -65,7 +59,6 @@ router.post("/", authMiddleware, async (req, res) => {
 // Get all users
 router.get("/", async (req, res) => {
   try {
-    // Select all fields including firebaseUid
     const users = await User.find().select("+firebaseUid");
     res.json(users);
   } catch (err) {
@@ -77,18 +70,15 @@ router.get("/", async (req, res) => {
 router.get("/:userId", async (req, res) => {
   console.log("Backend: Received GET request for user ID:", req.params.userId);
   try {
-    // Find user by MongoDB _id and select all fields including firebaseUid and googleId
     const user = await User.findById(req.params.userId).select(
       "+firebaseUid +googleId"
     );
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
-    // The user object retrieved now includes firebaseUid and googleId if they exist
     res.json(user);
   } catch (err) {
     console.error(err.message);
-    // Handle potential invalid ID format errors
     if (err.kind === "ObjectId") {
       return res.status(400).json({ msg: "Invalid user ID" });
     }
@@ -97,7 +87,6 @@ router.get("/:userId", async (req, res) => {
 });
 
 // Get user by googleId
-// Keep this route for Google login flow if needed, but ensure security
 router.get("/by-google-id/:googleId", async (req, res) => {
   try {
     // Find user by either googleId or firebaseUid

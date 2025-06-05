@@ -24,6 +24,9 @@ function AppContent() {
   const isLoggingOut = useRef(false);
   const navigate = useNavigate();
 
+  const BACKEND_URL =
+    process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
   useEffect(() => {
     console.log("AppContent.js: useEffect triggered for initial auth check.");
 
@@ -37,9 +40,9 @@ function AppContent() {
         console.log("AppContent.js: Found JWT. Attempting to validate...");
         setAuthToken(token);
         try {
-          const res = await axios.get("http://localhost:5000/api/auth/user");
+          const res = await axios.get("${BACKEND_URL}/api/auth/user");
           // If JWT valid, set user data from backend response
-          setCurrentUser(res.data); // This should contain name/email from DB
+          setCurrentUser(res.data); 
           console.log(
             "AppContent.js: Successfully loaded user from JWT.",
             res.data
@@ -55,7 +58,7 @@ function AppContent() {
         }
       }
 
-      // 2. After JWT check, set up Firebase listener. It will fire immediately with current state.
+      
       console.log(
         "AppContent.js: Setting up Firebase onAuthStateChanged listener."
       );
@@ -120,17 +123,14 @@ function AppContent() {
         );
       });
 
-      // Clean up the Firebase listener on component unmount
       return () => unsubscribe();
     };
 
     checkAuthStatus();
 
-    // Empty dependency array: runs only once on mount
   }, []);
 
   // Determine isAuthenticated based on the presence of currentUser
-  // This simplifies the logic used in routes
   const isAuthenticated = !!currentUser;
 
   console.log(
@@ -146,10 +146,6 @@ function AppContent() {
       userData
     );
 
-    // After successful login (either method), re-check authentication state
-    // This will now pick up the JWT if it was set by the Login component,
-    // or rely on the onAuthStateChanged listener for Google auth.
-
     const token = localStorage.getItem("token");
 
     if (token) {
@@ -158,9 +154,9 @@ function AppContent() {
       );
       setAuthToken(token);
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/user");
-        // If JWT valid, set user data from backend response
-        setCurrentUser(res.data); // This should contain name/email from DB
+        const res = await axios.get("${BACKEND_URL}/api/auth/user");
+       
+        setCurrentUser(res.data);
         console.log(
           "AppContent.js: handleSuccessfulAuth: Successfully loaded user from JWT.",
           res.data

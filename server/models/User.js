@@ -25,9 +25,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Optional: Add a method to compare passwords
 userSchema.methods.matchPassword = async function (enteredPassword) {
-  // We will add this implementation after installing bcryptjs
   return true; // Placeholder
 };
 

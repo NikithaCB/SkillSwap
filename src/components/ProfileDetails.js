@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // To get userId from URL
+import { useParams } from "react-router-dom"; 
 import axios from "axios";
-import "../styles/profileDetails.css"; // Import the CSS file
+import "../styles/profileDetails.css"; 
 import { useNavigate } from "react-router-dom";
-import Chat from "./Chat"; // Import the Chat component
+import Chat from "./Chat"; 
 
 const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
 function ProfileDetails({ currentUser }) {
   // Receive currentUser prop
-  const { userId } = useParams(); // Get userId from URL params
+  const { userId } = useParams(); 
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const [showChatPopup, setShowChatPopup] = useState(false); // State to control chat pop-up visibility
+  const [showChatPopup, setShowChatPopup] = useState(false); 
 
   useEffect(() => {
     console.log("ProfileDetails.js: useEffect triggered.");
@@ -29,14 +29,12 @@ function ProfileDetails({ currentUser }) {
           console.log(
             `ProfileDetails.js: userId found in URL: ${userId}. Attempting to fetch profile by ID.`
           );
-          // Fetch profile by ID if userId is in the URL
-          // Make sure this backend route is correctly implemented to find by MongoDB _id
-          const profileUrl = `${BACKEND_URL}/api/users/${userId}`; // **Corrected URL using BACKEND_URL**
+         const profileUrl = `${BACKEND_URL}/api/users/${userId}`; 
           console.log(
             "ProfileDetails.js: Fetching profile from URL:",
             profileUrl
-          ); // Log the exact URL
-          const res = await axios.get(profileUrl); // Use the variable
+          ); 
+          const res = await axios.get(profileUrl); 
           profileData = res.data;
           console.log(
             "ProfileDetails.js: Profile fetched successfully by ID.",
@@ -47,7 +45,7 @@ function ProfileDetails({ currentUser }) {
             "ProfileDetails.js: No userId in URL, using currentUser prop:",
             currentUser.id
           );
-          // If no userId in URL, display the current logged-in user's profile
+     
           profileData = currentUser;
           console.log(
             "ProfileDetails.js: Using currentUser prop for profile data.",
@@ -81,7 +79,6 @@ function ProfileDetails({ currentUser }) {
       }
     };
 
-    // Only fetch if userId is present OR currentUser is available
     if (userId || currentUser) {
       fetchProfile();
     } else {
@@ -93,8 +90,6 @@ function ProfileDetails({ currentUser }) {
       setError("No user information to display profile.");
     }
 
-    // Depend on userId and currentUser to refetch if they change
-    // Only depend on currentUser.id if you need to refetch when *the* current user changes, not just their data
   }, [userId, currentUser]); // Keep userId and currentUser as dependencies
 
   // Modify handleChat to show the pop-up with Firebase UID check
@@ -115,13 +110,11 @@ function ProfileDetails({ currentUser }) {
         "To start a chat, your profile needs to be complete. Please update your profile with necessary information including linking your account to enable chat. Do you want to go to your Profile Form now?"
       );
       if (confirmUpdate) {
-        navigate("/create-profile"); // Navigate to the current user's profile form
+        navigate("/create-profile");
       }
-      return; // Exit if current user's Firebase UID is missing
+      return; 
     }
 
-    // If the current user's profile is complete, proceed to show the chat pop-up.
-    // The Chat component will handle fetching recipient data and checking their firebaseUid.
     console.log(
       "ProfileDetails.js: Current user Firebase UID found. Proceeding to show chat."
     );
@@ -153,10 +146,8 @@ function ProfileDetails({ currentUser }) {
 
   return (
     <div className="profile-details-container">
-      {/* Wrap profile content excluding pop-up */}
       <div className="profile-details-content-wrapper">
         <div className="profile-details-header">
-          {/* Display profile photo if available, otherwise a placeholder */}
           {profile.photo ? (
             <img
               src={profile.photo}
@@ -166,7 +157,7 @@ function ProfileDetails({ currentUser }) {
           ) : (
             <div className="profile-details-avatar">
               {profile.name ? profile.name.charAt(0).toUpperCase() : "?"}
-            </div> // Uppercase initial
+            </div> 
           )}
           <h2 className="profile-details-name">{profile.name || "No Name"}</h2>
         </div>
@@ -211,7 +202,6 @@ function ProfileDetails({ currentUser }) {
           </div>
         </div>
 
-        {/* Only show chat button if viewing another user's profile */}
         {currentUser && profile._id && currentUser._id !== profile._id && (
           <button onClick={handleChat} className="chat-profile-button">
             Chat with {profile.name ? profile.name.split(" ")[0] : "User"}
@@ -222,24 +212,16 @@ function ProfileDetails({ currentUser }) {
       {/* Chat Pop-up */}
       {showChatPopup &&
         profile &&
-        profile._id && ( // Conditionally render the chat pop-up
+        profile._id && (
           <div className="chat-popup-container">
-            {" "}
-            {/* Add a container for styling */}
-            {/* Pass necessary props to Chat component */}
-            {/* Adapt the Chat component's back button to call a prop function instead of navigate(-1) */}
             <Chat
               currentUser={currentUser}
               recipientId={profile._id}
-              // You might need to pass a prop to Chat to indicate it's in pop-up mode
-              // and modify its internal back button logic to call a prop function instead of navigate(-1)
-              onClose={handleCloseChat} // Pass the close handler
+              onClose={handleCloseChat} 
             />
           </div>
         )}
 
-      {/* Optional: Add a back button */}
-      {/* <button onClick={() => navigate(-1)}>Back</button> */}
     </div>
   );
 }

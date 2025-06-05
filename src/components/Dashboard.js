@@ -76,9 +76,8 @@ function Dashboard({ user, initiateLogout }) {
   const handleLogout = async () => {
     try {
       console.log("Dashboard.js: Calling initiateLogout from AppContent.");
-      await initiateLogout(); // Call the passed initiateLogout function
-      // Navigation to "/" will be handled by the onAuthStateChanged listener in AppContent
-      console.log("Dashboard.js: initiateLogout finished.");
+      await initiateLogout(); 
+       console.log("Dashboard.js: initiateLogout finished.");
     } catch (error) {
       console.error("Dashboard.js: Error during logout:", error);
       alert(error.message);

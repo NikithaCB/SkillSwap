@@ -11,7 +11,7 @@ import { FcGoogle } from "react-icons/fc";
 import "../styles/login.css";
 import { FaGoogle } from "react-icons/fa";
 
-import axios from "axios"; // Import axios
+import axios from "axios";
 
 const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
@@ -43,8 +43,9 @@ function Login({ onSuccessfulAuth }) {
       console.log("Backend JWT received:", res.data.token);
 
       // Store the JWT in localStorage
+      console.log("Attempting to save token to localStorage (Google Login)...");
       localStorage.setItem("token", res.data.token);
-      console.log("Backend JWT saved to localStorage.");
+      console.log("Token saved successfully (Google Login).");
 
       // Call onSuccessfulAuth to signal successful auth to AppContent
       // AppContent handleSuccessfulAuth will validate the backend token and set state.
@@ -57,9 +58,7 @@ function Login({ onSuccessfulAuth }) {
         error.response?.data || error.message
       );
       console.error("Full Google Login error object:", error);
-      // alert(
-      //   "Google Login failed: " + (error.response?.data?.msg || error.message)
-      // );
+    
     }
   };
 
@@ -79,16 +78,17 @@ function Login({ onSuccessfulAuth }) {
       console.log(
         "Sending Firebase user data to backend after registration..."
       );
-      // Note: Firebase email/password doesn't directly provide name/photo on signup.
-      // Name/photo will likely be set via the profile form later or linked if email existed.
-      const res = await axios.post(`${BACKEND_URL}/api/auth/firebase-login`, {
+       const res = await axios.post(`${BACKEND_URL}/api/auth/firebase-login`, {
         firebaseUid: firebaseUser.uid,
-        name: firebaseUser.displayName, // This might be null initially for email/password Firebase users
+        name: firebaseUser.displayName, 
         email: firebaseUser.email,
-        photo: firebaseUser.photoURL, // This will be null initially for email/password Firebase users
+        photo: firebaseUser.photoURL, 
       });
 
       console.log("Backend JWT received after registration:", res.data.token);
+      console.log(
+        "Attempting to save token to localStorage (Email Sign Up)..."
+      );
       localStorage.setItem("token", res.data.token);
       console.log("Backend JWT saved to localStorage after registration.");
 
@@ -110,17 +110,17 @@ function Login({ onSuccessfulAuth }) {
       const firebaseUser = result.user;
       console.log("Firebase Login successful:", firebaseUser);
 
-      // Now call backend to find user in MongoDB (by firebaseUid) and get JWT
       console.log("Sending Firebase user data to backend after login...");
-      // Even on login, send the basic Firebase user info to ensure consistency and get the correct JWT
+
       const res = await axios.post(`${BACKEND_URL}/api/auth/firebase-login`, {
         firebaseUid: firebaseUser.uid,
-        name: firebaseUser.displayName, // Will be null if not set in Firebase
+        name: firebaseUser.displayName, 
         email: firebaseUser.email,
-        photo: firebaseUser.photoURL, // Will be null if not set in Firebase
+        photo: firebaseUser.photoURL, 
       });
 
       console.log("Backend JWT received after login:", res.data.token);
+      console.log("Attempting to save token to localStorage (Email Login)...");
       localStorage.setItem("token", res.data.token);
       console.log("Backend JWT saved to localStorage after login.");
 
@@ -144,7 +144,6 @@ function Login({ onSuccessfulAuth }) {
             From Skill to Skill, Let's Make the Swap!
           </p>
 
-          {/* Google Login Button */}
           <button
             className="login-button"
             onClick={handleGoogleLogin}
@@ -163,17 +162,7 @@ function Login({ onSuccessfulAuth }) {
 
           {/* Email/Password Login */}
           <div className="login-form">
-            {/* Name Input for Sign Up */}
-            {/* You might want to conditionally render this input only on a signup tab/page */}
-            {/* For now, it appears for both login and signup */}
-            {/* <input
-              id="name"
-              type="text"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="login-input"
-            /> */}
+            
             <input
               id="email"
               type="email"

@@ -144,15 +144,12 @@ router.post("/firebase-login", async (req, res) => {
   console.log("Request body:", { firebaseUid, name, email, photo });
 
   try {
-    // Check if user exists by firebaseUid
     console.log("Attempting to find user by firebaseUid:", firebaseUid);
     let user = await User.findOne({ firebaseUid });
 
     if (user) {
-      // User exists, generate JWT for them
       console.log("Firebase user found in DB by firebaseUid:", user._id);
     } else {
-      // User does not exist by firebaseUid, check by email
       console.log(
         "Firebase user not found by firebaseUid, attempting to find by email:",
         email
@@ -160,32 +157,28 @@ router.post("/firebase-login", async (req, res) => {
       user = await User.findOne({ email });
 
       if (user) {
-        // User found by email, link firebaseUid to existing account
         console.log(
           "Existing email user found, linking Firebase UID.",
           user._id
         );
         user.firebaseUid = firebaseUid;
-        // Optionally update name/photo if they were empty before
         if (!user.name) user.name = name;
-        if (!user.photo) user.photo = photo; // Assuming photo is passed from frontend
+        if (!user.photo) user.photo = photo; 
       } else {
-        // No existing user by firebaseUid or email, create a completely new user
+        
         console.log(
           "No existing user found, creating a new user with Firebase data."
         );
         user = new User({
-          firebaseUid, // Save the Firebase UID
-          name: name || email.split("@")[0], // Use name if available, otherwise part of email
-          email, // Use email from Firebase
-          photo: photo || "", // Save photo URL from Firebase
-          // Default empty arrays/strings for other fields
+          firebaseUid, 
+          name: name || email.split("@")[0], 
+          email, 
+          photo: photo || "", 
           teachSkills: [],
           learnSkills: [],
           bio: "",
           rating: 0,
           reviews: [],
-          // Password field will be null/undefined as it's a Firebase login
         });
         console.log("New user object created:", user);
       }
@@ -200,12 +193,11 @@ router.post("/firebase-login", async (req, res) => {
       );
     }
 
-    // Generate JWT payload for the user
     console.log("Generating JWT payload for user:", user._id);
     const payload = {
       user: {
         id: user.id, // MongoDB _id
-        uid: user.firebaseUid, // Use Firebase UID as the main unique identifier in JWT payload
+        uid: user.firebaseUid, 
         name: user.name,
         email: user.email,
         photo: user.photo,
@@ -231,16 +223,8 @@ router.post("/firebase-login", async (req, res) => {
   }
 });
 
-// @route   GET /api/auth/user
-// @desc    Get authenticated user data based on token
-// @access  Private (requires token)
 router.get("/user", authMiddleware, async (req, res) => {
   try {
-    // req.user is set by the authMiddleware, it contains the payload from JWT
-    // We should find the user using the uid from the JWT payload, which is now the firebaseUid or mongo _id
-    // If you decided to put MongoDB _id in payload.user.id, use req.user.id
-    // If you decided to put Firebase UID in payload.user.uid, use req.user.uid
-    // Let's assume you want to find by MongoDB _id for consistency with other routes
     const user = await User.findById(req.user.id)
       .select("-password")
       .select("+firebaseUid"); // Include firebaseUid here
